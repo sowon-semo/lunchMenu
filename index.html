@@ -1,3 +1,5 @@
+
+<!DOCTYPE html>	
 <html lang="ko">
   <head>
     <title>주소 찾기</title>
@@ -8,6 +10,7 @@
   <div id = "layer" style = "display:block; position:absolute; overflow:hidden; z-index:1; -webkit-overflow-scrolling:touch; ">
   </div>
   <script src="https://spi.maps.daum.net/imap/map_js_init/postcode.v2.js"></script>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey={dbc379724e0f6871390b64497ffaadc2}&libraries=services"></script>
   <script>
     window.addEventListener("message", onReceivedPostMessage, false);
 
@@ -41,7 +44,7 @@
           var addressData = ""
           if (data.userSelectedType == "R")
           {
-              addressData = data.roadAddress
+              addressData = data.roadAddress 
           }
           else
           {
@@ -52,10 +55,25 @@
             }
           }
           
+          var posX = ""
+          var posY = ""
+          const geocoder = new daum.maps.services.Geocoder();
+          geocoder.addressSearch(address, (result, status) => {
+        	  if(status === daum.maps.services.Status.OK) {
+        		  posX = result[0].x
+        		  posY = result[0].y
+        	  } else {
+        		  reject();
+        	  }
+          });
+          
+          
           var postData = {
               adressdata : addressData,
               zonecode : data.zonecode,
-              buildingname : data.buildingName
+              buildingname : data.buildingName,
+              x : posX,
+              y : posY
           };
           
           console.log("PSJ_CHECK "+data);
@@ -81,4 +99,3 @@
   </script>
   </body>
 </html>
-
