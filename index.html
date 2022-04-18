@@ -39,6 +39,24 @@
     function execDaumPostcode() {
         new daum.Postcode({
         oncomplete: function(data) {
+            var jibunAddress = ""
+            var addressData = ""
+            if (data.userSelectedType == "R")
+            {
+                addressData = data.roadAddress 
+            }
+            else
+            {
+                if (data.jibunAddress == "") {
+                addressData = data.autoJibunAddress
+                } else if (data.autoJibunAddress == "") {
+                    addressData = data.jibunAddress
+                }
+            }
+            
+            var posX = ""
+            var posY = ""
+            
             Promise.resolve(data).then(o => {
                 const { address } = data;
 
@@ -57,7 +75,19 @@
                 })
             }).then(result => {
                 // 위, 경도 결과 값
-            });
+              var postData = {
+              adressdata : addressData,
+              zonecode : data.zonecode,
+              buildingname : data.buildingName,
+              posX : x,
+              posY : y
+          };
+          
+          console.log("PSJ_CHECK "+data);
+           console.log("PSJ_CHECK "+data.buildingName);
+          
+          window.postMessageToiOS(postData);
+           });
         },
         width: "100%",
         height: window.innerHeight
